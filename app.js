@@ -34,6 +34,15 @@ const ItemCtrl = (function(){
             data.items.push(newItem);
             return newItem;
         },
+        getTotalCalories: function(){
+            let total = 0;
+            data.items.forEach(item => {
+                total += item.calories;
+            });
+            data.totalCalories = total;
+
+            return data.totalCalories;
+        },
         logData: function(){
             return data;
         } 
@@ -48,7 +57,8 @@ const UICtrl = (function(){
         itemList: '#item-list',
         addBtn: '.add-btn',
         itemNameInput: '#item-name',
-        itemCaloriesInput: '#item-calories'
+        itemCaloriesInput: '#item-calories',
+        totalCalories: '.total-calories'
     }
     //PUBLIC
     return{
@@ -87,6 +97,12 @@ const UICtrl = (function(){
             </a>`
             document.querySelector(UISelectors.itemList).insertAdjacentElement('beforeend', li);
         },
+       
+        showTotalCalories: function(totalCalories){
+            document.querySelector(UISelectors.totalCalories).textContent = totalCalories;
+            // console.log(`Total ${totalCalories} calories`)
+        },
+
         clearInput: function(){
             document.querySelector(UISelectors.itemNameInput) = '';
             document.querySelector(UISelectors.itemCaloriesInput) = '';
@@ -111,6 +127,10 @@ const App = (function(ItemCtrl, UICtrl){
         if(input.name !== '' && input.calories != ''){
             const newItem = ItemCtrl.addItem(input.name, input.calories)
             UICtrl.addListItem(newItem);
+            
+            const totalCalories = ItemCtrl.getTotalCalories();
+            //add to UI
+            UICtrl.showTotalCalories(totalCalories);
         }
         e.preventDefault();
     }    
@@ -126,8 +146,10 @@ const App = (function(ItemCtrl, UICtrl){
             else{            
             //Populate list 
             UICtrl.populateItemList(items);}        
+            const totalCalories = ItemCtrl.getTotalCalories();
+            //add to UI
+            UICtrl.showTotalCalories(totalCalories);
             loadEventListeners();
-
         }
     }
 })(ItemCtrl, UICtrl);
